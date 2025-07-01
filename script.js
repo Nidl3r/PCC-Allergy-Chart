@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
 
 // Firebase configuration
 const firebaseConfig = {
@@ -63,19 +64,37 @@ function getSelectedAllergies() {
   return Array.from(checked).map(input => input.value);
 }
 
-// Show only dishes that DO NOT contain any selected allergens
+
+// 🔁 Record user allergy selection in Firestore
+async function recordSelection(venue, selectedAllergies) {
+  try {
+    await addDoc(collection(db, "selections"), {
+      venue: venue,
+      selectedAllergies: selectedAllergies,
+      timestamp: serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Error recording selection:", error);
+  }
+}
+
+// ✅ Show only dishes that DO NOT contain any selected allergens
 function filterSafeDishes() {
   const selected = getSelectedAllergies();
+
+  // 🔄 Save selection to Firestore
+  recordSelection(selectedVenue, selected);
 
   const safe = allDishes.filter(dish => {
     if (!dish.allergens || dish.allergens.length === 0) return false;
 
-    // ✅ Include only if ALL selected allergies are covered (safe) by this dish
+    // ✅ Include only if ALL selected allergies are safe (covered) by this dish
     return selected.every(selectedAllergen => dish.allergens.includes(selectedAllergen));
   });
 
   showResults(safe);
 }
+
 
 
 // Display results grouped by category
