@@ -177,29 +177,32 @@ html, body {
       transition: opacity 0.3s ease-in-out;
     }
 
-    #modal {
-      background: #fffdf9;
-      padding: 2.5rem 2rem;
-      border-radius: 12px;
-      max-width: 90%;
-      max-height: 85vh;
-      overflow-y: auto;
-      position: relative;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      border: 1px solid #ddd;
-    }
+  #modal {
+  background: #fffdf9;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  max-width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative; /* ⬅️ Required for absolute positioning of close button */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  border: 1px solid #ddd;
+}
+
 
     #close-modal {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.75rem;
-      font-weight: bold;
-      cursor: pointer;
-      color: #8B4513;
-    }
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #8B4513;
+  z-index: 10;
+}
+
 
     #modal-content h2 {
       font-family: 'Georgia', serif;
