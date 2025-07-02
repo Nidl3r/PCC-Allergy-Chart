@@ -18,18 +18,19 @@ body {
 
 
 
+#header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f9f4f0;
+  z-index: 999;
+  padding: 1rem;
+  border-bottom: 2px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+}
 
-    #header-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: #f9f4f0;
-      z-index: 999;
-      padding: 1rem 1.5rem;
-      border-bottom: 2px solid #ccc;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
 
 html, body {
   max-width: 100%;
@@ -48,22 +49,20 @@ html, body {
 }
 
 #top-bar button {
-  all: unset;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   background-color: #8B4513;
   color: white;
   font-size: 1rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1.25rem;
   border-radius: 5px;
   cursor: pointer;
-  width: auto;            /* ❗ Only take as much space as needed */
-  max-width: 320px;
-  height: 48px;
+  max-width: 100%;
   box-sizing: border-box;
-  text-align: center;
+  white-space: nowrap;
 }
+
 
 
 
@@ -73,19 +72,58 @@ html, body {
 
 /* Responsive fix for very small screens */
 @media (max-width: 480px) {
+  h1 {
+    font-size: 1.4rem;
+  }
+
   #header-container {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
   }
 
   #top-bar {
+    flex-direction: column;
     gap: 0.5rem;
+    padding: 0 0.5rem;
   }
 
   #top-bar button {
+    min-width: 0;
+    width: 100%;
     font-size: 0.95rem;
-    padding: 0.65rem 1rem;
+    padding: 0.6rem 1rem;
+  }
+
+  #app-content {
+    padding-top: 10rem !important; /* Adjust for fixed header height */
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  #modal {
+    padding: 1rem;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  #modal-content h2 {
+    font-size: 1.25rem;
+  }
+
+  #modal-content h3 {
+    font-size: 1.1rem;
+  }
+
+  #modal-content li {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  #allergen-form {
+    max-height: 65vh; /* Makes it scrollable on mobile if long */
+    overflow-y: auto;
   }
 }
+
 
 
 
@@ -111,13 +149,14 @@ html, body {
   max-width: 640px;
   margin: 0 auto;
   background: white;
-  padding: 1.5rem;
-  padding-top: 14rem; /* header padding */
+  padding: 10rem 1rem 2rem; /* vertical and side padding */
+  padding-top: 8rem; /* Enough space for fixed header */
   border-radius: 10px;
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
   box-sizing: border-box;
   overflow-x: hidden;
 }
+
 
 @media (max-width: 600px) {
   #app-content {
@@ -318,16 +357,14 @@ html, body {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  padding-right: 0.5rem;
-  overflow-y: auto;
-  max-height: 400px;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
-  overflow: visible;        /* ✅ allow full expansion */
-  max-height: none;         /* ✅ no height limit */
+  overflow: visible;
 }
+
 
 
 
