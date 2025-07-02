@@ -5,425 +5,340 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <title>Allergy-Friendly Menu</title>
-  <style>
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background-color: #f9f4f0;
-  color: #2c3e50;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  box-sizing: border-box;
-}
+<style>
+  * {
+    box-sizing: border-box;
+  }
 
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f9f4f0;
+    color: #2c3e50;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
 
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
 
-#header-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #f9f4f0;
-  z-index: 999;
-  padding: 1rem;
-  border-bottom: 2px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  box-sizing: border-box;
-}
-
-
-html, body {
-  max-width: 100%;
-  overflow-x: hidden; /* ✅ Prevents horizontal scrolling */
-}
-
-#top-bar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  padding: 0 1rem;
-  box-sizing: border-box;
-}
-
-#top-bar button {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #8B4513;
-  color: white;
-  font-size: 1rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 5px;
-  cursor: pointer;
-  max-width: 100%;
-  box-sizing: border-box;
-  white-space: nowrap;
-}
-
-
-
-
-#top-bar button:hover {
-  background-color: #8B4513;
-}
-
-/* Responsive fix for very small screens */
-@media (max-width: 480px) {
   h1 {
-    font-size: 1.4rem;
+    text-align: center;
+    color: #8B4513;
+    font-family: 'Georgia', serif;
+    margin-bottom: 2rem;
+    font-size: 2rem;
   }
 
   #header-container {
-    padding: 0.75rem 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f9f4f0;
+    z-index: 999;
+    padding: 1rem;
+    border-bottom: 2px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 
   #top-bar {
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
 
   #top-bar button {
-    min-width: 0;
-    width: 100%;
-    font-size: 0.95rem;
-    padding: 0.6rem 1rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #8B4513;
+    color: white;
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  #top-bar button:hover {
+    background-color: #5C3317;
+  }
+
+  #venue-screen,
+  #app-content {
+    max-width: 640px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease-in-out;
   }
 
   #app-content {
-    padding-top: 10rem !important; /* Adjust for fixed header height */
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    width: 100%;
+    padding: 16rem 1rem 2rem;
+    overflow-x: hidden;
+  }
+
+  #venue-screen {
+    margin-top: 100px;
+    padding: 1.5rem;
+  }
+
+  #allergen-search {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  #allergen-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+
+  button {
+    background-color: #8B4513;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  button:hover {
+    background-color: #5C3317;
+  }
+
+  #sort-toggle {
+    background-color: #2c3e50;
+  }
+
+  #sort-toggle:hover {
+    background-color: #1e2a35;
+  }
+
+  #go-back {
+    display: none;
+    margin-bottom: 1rem;
+  }
+
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
   }
 
   #modal {
-    padding: 1rem;
+    background: #fffdf9;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    max-width: 90%;
     max-height: 85vh;
     overflow-y: auto;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    border: 1px solid #ddd;
+  }
+
+  #close-modal {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: #8B4513;
+    z-index: 10;
   }
 
   #modal-content h2 {
-    font-size: 1.25rem;
+    font-family: 'Georgia', serif;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #5b3921;
+    border-bottom: 2px solid #e0d6ca;
+    padding-bottom: 0.5rem;
   }
 
   #modal-content h3 {
-    font-size: 1.1rem;
+    font-family: 'Georgia', serif;
+    font-size: 1.2rem;
+    color: #5b3921;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  #modal-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid #eee;
   }
 
   #modal-content li {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1rem;
+    font-family: 'Georgia', serif;
+    background-color: #fffaf5;
+  }
+
+  #modal-content li:hover {
+    background-color: #f0eae2;
+  }
+
+  #download-image {
+    display: block;
+    margin: 2rem auto 0;
     font-size: 1rem;
-    padding: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #8B4513;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  #download-image:hover {
+    background-color: #5C3317;
+  }
+
+  ul {
+    padding-left: 1.25rem;
+  }
+
+  li {
+    margin-bottom: 0.25rem;
+  }
+
+  #show-safe-dishes {
+    display: none;
+  }
+
+  #venue-select {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    background-color: white;
   }
 
   #allergen-form {
-    max-height: 65vh; /* Makes it scrollable on mobile if long */
-    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: none;
   }
-}
 
+  #allergen-form label {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fffaf5;
+    font-size: 1rem;
+    cursor: pointer;
+  }
 
+  #allergen-form input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: .5rem;
+    cursor: pointer;
+  }
 
+  #allergen-selection {
+    width: 100%;
+    overflow: visible;
+  }
 
+  /* 📱 Unified Responsive Rules for Small Screens */
+  @media (max-width: 480px) {
     h1 {
-      text-align: center;
-      color: #8B4513;
-      font-family: 'Georgia', serif;
-      margin-bottom: 2rem;
-      font-size: 2rem;
+      font-size: 1.4rem;
     }
 
-    #venue-screen, #app-content {
-      max-width: 640px;
-      margin: 0 auto;
-      background: white;
-      padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    #header-container {
+      padding: 0.75rem 1rem;
     }
 
-#app-content {
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-  background: white;
-  padding: 10rem 1rem 2rem; /* vertical and side padding */
-  padding-top: 8rem; /* Enough space for fixed header */
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
+    #top-bar {
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0 0.5rem;
+    }
 
-
-@media (max-width: 600px) {
-  #app-content {
-    padding-top: 14rem;
-  }
-}
-
-
-#allergen-search {
-  flex: 1;
-  min-width: 200px;
-  padding: 0.75rem 1rem;
-  font-size: 1.1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-
- #allergen-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  width: 100%;
-}
-
-    button {
-      background-color: #8B4513;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.25rem;
-      font-size: 1rem;
-      border-radius: 5px;
-      cursor: pointer;
+    #top-bar button {
       width: 100%;
-      box-sizing: border-box;
+      font-size: 0.95rem;
+      padding: 0.6rem 1rem;
     }
 
-    button:hover {
-      background-color: #5C3317;
+    #app-content {
+      padding-top: 11rem;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
     }
 
-    #sort-toggle {
-      background-color: #2c3e50;
+    #modal {
+      padding: 1rem;
+      max-height: 85vh;
+      overflow-y: auto;
     }
-
-    #sort-toggle:hover {
-      background-color: #1e2a35;
-    }
-
-    #go-back {
-      display: none;
-      margin-bottom: 1rem;
-    }
-
-    #modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      transition: opacity 0.3s ease-in-out;
-    }
-
-  #modal {
-  background: #fffdf9;
-  padding: 2.5rem 2rem;
-  border-radius: 12px;
-  max-width: 90%;
-  max-height: 85vh;
-  overflow-y: auto;
-  position: relative; /* ⬅️ Required for absolute positioning of close button */
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  border: 1px solid #ddd;
-}
-
-
-    #close-modal {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: none;
-  border: none;
-  font-size: 2rem;
-  font-weight: bold;
-  cursor: pointer;
-  color: #8B4513;
-  z-index: 10;
-}
-
 
     #modal-content h2 {
-      font-family: 'Georgia', serif;
-      font-size: 1.5rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: #5b3921;
-      border-bottom: 2px solid #e0d6ca;
-      padding-bottom: 0.5rem;
+      font-size: 1.25rem;
     }
 
     #modal-content h3 {
-      font-family: 'Georgia', serif;
-      font-size: 1.2rem;
-      color: #5b3921;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    #modal-content ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      border-top: 1px solid #eee;
+      font-size: 1.1rem;
     }
 
     #modal-content li {
-      padding: 1rem;
-      border-bottom: 1px solid #eee;
-      font-size: 1.1rem;
-      font-family: 'Georgia', serif;
-      background-color: #fffaf5;
-    }
-
-    #modal-content li:hover {
-      background-color: #f0eae2;
-    }
-
-    #download-image {
-      display: block;
-      margin: 2rem auto 0;
       font-size: 1rem;
-      padding: 0.75rem 1.5rem;
-      background-color: #8B4513;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #download-image:hover {
-      background-color: #5C3317;
-    }
-
-    ul {
-      padding-left: 1.25rem;
-    }
-
-    li {
-      margin-bottom: 0.25rem;
-    }
-
-    #venue-screen {
-      margin-top: 100px;
-    }
-
-    #show-safe-dishes {
-      display: none;
-    }
-
-    #venue-select {
-      font-size: 1rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      background-color: white;
-    }
-
-    #allergen-form label {
-      display: flex;
-      align-items: center;
       padding: 0.75rem;
-      margin-bottom: 0.5rem;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background-color: #fffaf5;
-      font-size: 1rem;
-      cursor: pointer;
     }
 
-    #allergen-form input[type="checkbox"] {
-      width: 1.5rem;
-      height: 1.5rem;
-      margin-right: .5rem;
-      cursor: pointer;
+    #allergen-form {
+      max-height: 60vh;
+      overflow-y: auto;
     }
+  }
+</style>
 
-#allergen-form {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  overflow: visible;
-}
-
-
-
-
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.4rem;
-      }
-
-      #modal {
-        padding: 1rem;
-      }
-
-      #modal-content h2 {
-        font-size: 1.25rem;
-      }
-
-      #modal-content h3 {
-        font-size: 1.1rem;
-      }
-
-      #modal-content li {
-        font-size: 1rem;
-        padding: 0.75rem;
-      }
-
-      #top-bar {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      #top-bar button {
-        min-width: 0;
-        width: 100%;
-      }
-    }
-
-    #venue-screen,
-#app-content {
-  transition: all 0.3s ease-in-out;
-}
-
-#allergen-selection {
-  width: 100%;
-  overflow: visible;
-}
-
-#app-content {
-  width: 100%;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  overflow-x: hidden;
-}
-* {
-  box-sizing: border-box;
-}
-
-
-  </style>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
