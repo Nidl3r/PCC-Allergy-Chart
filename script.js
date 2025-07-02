@@ -47,16 +47,20 @@ function renderCheckboxes() {
     .filter(allergen => allergen.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => sortAsc ? a.localeCompare(b) : b.localeCompare(a));
 
+  if (filtered.length === 0) {
+    form.innerHTML = "<p style='color:red;'>No allergies found. Check connection or venue data.</p>";
+    return;
+  }
+
   filtered.forEach(allergen => {
     const label = document.createElement("label");
     label.innerHTML = `
-      <input type="checkbox" name="allergen" value="${allergen}">
-      ${allergen}
+      <input type="checkbox" name="allergen" value="${allergen}"> ${allergen}
     `;
     form.appendChild(label);
-    form.appendChild(document.createElement("br"));
   });
 }
+
 
 // Get selected allergies
 function getSelectedAllergies() {
