@@ -18,6 +18,8 @@ const db = getFirestore(app);
 let allDishes = [];
 let allAllergens = new Set();
 let selectedVenue = null;
+selectedVenue = localStorage.getItem("selectedVenue") || null;
+
 let searchQuery = "";
 let sortAsc = true;
 
@@ -26,6 +28,7 @@ async function loadDishes() {
   const snapshot = await getDocs(collection(db, "dishes"));
   allDishes = [];
   allAllergens.clear();
+console.log("Selected venue:", selectedVenue);
 
   snapshot.forEach(doc => {
     const data = doc.data();
@@ -173,8 +176,9 @@ document.getElementById("enter-app").addEventListener("click", () => {
     return;
   }
 
-  // Save selected venue
+  // Save selected venue to memory and localStorage
   selectedVenue = selectedVenueValue;
+  localStorage.setItem("selectedVenue", selectedVenue); // ✅ Save it
 
   // Toggle screen visibility
   document.getElementById("venue-screen").style.display = "none";
@@ -195,6 +199,7 @@ document.getElementById("enter-app").addEventListener("click", () => {
 });
 
 
+
 document.getElementById("go-back").addEventListener("click", () => {
   document.getElementById("app-content").style.display = "none";
   document.getElementById("venue-screen").style.display = "block";
@@ -212,3 +217,5 @@ document.getElementById("go-back").addEventListener("click", () => {
 document.getElementById("close-modal").addEventListener("click", () => {
   document.getElementById("modal-overlay").style.display = "none";
 });
+
+
