@@ -2,16 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>Allergy-Friendly Menu</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background-color: #f9f4f0;
-      color: #2c3e50;
-      margin: 0;
-      padding: 6.5rem 1rem 1rem;
-    }
+  body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f9f4f0;
+  color: #2c3e50;
+  margin: 0;
+  padding: 6.5rem 1rem 1rem;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
 
     #header-container {
       position: fixed;
@@ -25,7 +29,7 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-  #top-bar {
+#top-bar {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -35,6 +39,7 @@
   padding: 0 1rem;
   box-sizing: border-box;
 }
+
 
 #top-bar button {
   all: unset;
@@ -48,11 +53,12 @@
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
-  max-width: 280px; /* ✅ Prevents overflow */
+  max-width: 280px;
   height: 48px;
   box-sizing: border-box;
   text-align: center;
 }
+
 
 
 #top-bar button:hover {
@@ -88,26 +94,26 @@
       box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
 
-  #app-content {
+#app-content {
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
   background: white;
   padding: 1.5rem;
-  padding-top: 7rem; /* 👈 Pushes content below fixed header */
+  padding-top: 7rem; /* header padding */
   border-radius: 10px;
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
   box-sizing: border-box;
   overflow-x: hidden;
 }
+
 @media (max-width: 600px) {
   #app-content {
     padding-top: 7rem;
   }
 }
-body {
-  overflow-x: hidden;
-}
+
+
 
 
     #allergen-controls {
@@ -283,12 +289,16 @@ body {
       cursor: pointer;
     }
 
-  #allergen-form {
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 0.5rem;
+#allergen-form {
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
-  width: 100%; /* ✅ Ensure full width */
+  padding-right: 0.5rem;
+  overflow-y: auto;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 
@@ -321,10 +331,16 @@ body {
       }
 
       #top-bar button {
-        min-width: unset;
+        min-width: 0;
         width: 100%;
       }
     }
+
+    #venue-screen,
+#app-content {
+  transition: all 0.3s ease-in-out;
+}
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
