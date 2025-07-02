@@ -25,21 +25,20 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-   #top-bar {
+  #top-bar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
   gap: 1rem;
-  margin-top: 1rem;
   width: 100%;
-  box-sizing: border-box;
   padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 #top-bar button {
   all: unset;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   background-color: #8B4513;
@@ -49,10 +48,12 @@
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
-  max-width: 300px;
+  max-width: 280px; /* ✅ Prevents overflow */
   height: 48px;
   box-sizing: border-box;
+  text-align: center;
 }
+
 
 #top-bar button:hover {
   background-color: #5C3317;
@@ -103,6 +104,9 @@
   #app-content {
     padding-top: 7rem;
   }
+}
+body {
+  overflow-x: hidden;
 }
 
 
@@ -279,14 +283,14 @@
       cursor: pointer;
     }
 
-    #allergen-form {
-  display: block;
+  #allergen-form {
   max-height: 400px;
   overflow-y: auto;
   padding-right: 0.5rem;
-  margin-top: 1rem;
   box-sizing: border-box;
+  width: 100%; /* ✅ Ensure full width */
 }
+
 
 
     @media (max-width: 480px) {
