@@ -426,14 +426,48 @@
 
 
 
- <!-- Firebase SDKs -->
-<!-- Firebase App (compat version) -->
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<!-- ✅ Firebase SDK using modular ESM version -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    enableIndexedDbPersistence,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-<!-- Firestore (compat version) -->
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9JwIJAi-DaPaC0VfMxqNzvYP77jqoL9g",
+    authDomain: "pcc-allergy-chart.firebaseapp.com",
+    projectId: "pcc-allergy-chart",
+    storageBucket: "pcc-allergy-chart.appspot.com",
+    messagingSenderId: "66610041437",
+    appId: "1:66610041437:web:2949bf34e20ca081c573b4"
+  };
 
-<!-- Your non-module script (rename script.js if needed) -->
-<script src="script.js" type="text/javascript"></script>
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 🌐 Optional: enable offline support
+  try {
+    await enableIndexedDbPersistence(db);
+    console.log("✅ Offline persistence enabled");
+  } catch (err) {
+    console.warn("⚠️ Offline persistence failed or unsupported:", err.code || err.message);
+  }
+
+  // Make Firestore methods globally accessible to script.js
+  window.db = db;
+  window.collection = collection;
+  window.getDocs = getDocs;
+  window.addDoc = addDoc;
+  window.serverTimestamp = serverTimestamp;
+
+  // 📦 Load main app script after Firebase setup
+  import("./script.js");
+</script>
+
 </body>
 </html>

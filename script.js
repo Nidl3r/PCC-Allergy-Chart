@@ -27,33 +27,7 @@ if (localStorage.getItem("dataVersion") !== dataVersion) {
   localStorage.setItem("dataVersion", dataVersion);
 }
 
-// ✅ Firebase configuration (now using global `firebase` object from script tag)
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyD9JwIJAi-DaPaC0VfMxqNzvYP77jqoL9g",
-  authDomain: "pcc-allergy-chart.firebaseapp.com",
-  projectId: "pcc-allergy-chart",
-  storageBucket: "pcc-allergy-chart.appspot.com",
-  messagingSenderId: "66610041437",
-  appId: "1:66610041437:web:2949bf34e20ca081c573b4"
-};
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-// Get Firestore
-const db = firebase.firestore();
-
-
-// Optional: Enable offline persistence (can skip this if unstable on Safari)
-firebase.firestore().enablePersistence().catch(function (err) {
-  if (err.code === 'failed-precondition') {
-    console.warn("⚠️ Offline persistence failed: multiple tabs open.");
-  } else if (err.code === 'unimplemented') {
-    console.warn("⚠️ Offline persistence not supported in this browser.");
-  }
-});
-document.addEventListener("DOMContentLoaded", () => {
 // 🔁 App state variables
 let allDishes = [];
 let allAllergens = new Set();
@@ -61,7 +35,6 @@ let selectedVenue = localStorage.getItem("selectedVenue") || null;
 
 let searchQuery = "";
 let sortAsc = true;
-
 
 // Load dishes from Firestore filtered by selected venue
 async function loadDishes() {
@@ -180,7 +153,8 @@ async function recordSelection(venue, selectedAllergies) {
     await db.collection("selections").add({
       venue: venue,
       selectedAllergies: selectedAllergies,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      timestamp: serverTimestamp()
+
     });
   } catch (error) {
     console.error("Error recording selection:", error);
@@ -325,5 +299,3 @@ document.getElementById("close-modal").addEventListener("click", () => {
 function logDebug(message) {
   document.getElementById("debug-log").innerHTML += `<div>${message}</div>`;
 }
-
-});
