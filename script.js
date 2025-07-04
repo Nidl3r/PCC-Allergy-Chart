@@ -53,7 +53,7 @@ firebase.firestore().enablePersistence().catch(function (err) {
     console.warn("⚠️ Offline persistence not supported in this browser.");
   }
 });
-
+document.addEventListener("DOMContentLoaded", () => {
 // 🔁 App state variables
 let allDishes = [];
 let allAllergens = new Set();
@@ -299,3 +299,4 @@ function logDebug(message) {
   document.getElementById("debug-log").innerHTML += `<div>${message}</div>`;
 }
 
+});
