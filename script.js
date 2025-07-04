@@ -1,5 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 // 🔁 Update this version anytime your dish data changes significantly
 const dataVersion = "v1.0";
 
@@ -12,7 +10,6 @@ try {
   alert("Safari is in Private Browsing Mode. Please use regular browsing.");
 }
 
-
 // 🧹 Clear outdated cache if version has changed
 if (localStorage.getItem("dataVersion") !== dataVersion) {
   console.log("⚠️ New data version detected. Clearing old cache.");
@@ -24,8 +21,8 @@ if (localStorage.getItem("dataVersion") !== dataVersion) {
   localStorage.setItem("dataVersion", dataVersion);
 }
 
-
-// Firebase configuration
+// ✅ Firebase configuration (now using global `firebase` object from script tag)
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyD9JwIJAi-DaPaC0VfMxqNzvYP77jqoL9g",
   authDomain: "pcc-allergy-chart.firebaseapp.com",
@@ -35,16 +32,30 @@ const firebaseConfig = {
   appId: "1:66610041437:web:2949bf34e20ca081c573b4"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
+// Get Firestore
+const db = firebase.firestore();
+
+
+// Optional: Enable offline persistence (can skip this if unstable on Safari)
+firebase.firestore().enablePersistence().catch(function (err) {
+  if (err.code === 'failed-precondition') {
+    console.warn("⚠️ Offline persistence failed: multiple tabs open.");
+  } else if (err.code === 'unimplemented') {
+    console.warn("⚠️ Offline persistence not supported in this browser.");
+  }
+});
+
+// 🔁 App state variables
 let allDishes = [];
 let allAllergens = new Set();
-let selectedVenue = null;
-selectedVenue = localStorage.getItem("selectedVenue") || null;
+let selectedVenue = localStorage.getItem("selectedVenue") || null;
 
 let searchQuery = "";
 let sortAsc = true;
+
 
 // Load dishes from Firestore filtered by selected venue
 async function loadDishes() {
@@ -133,15 +144,16 @@ function getSelectedAllergies() {
 // 🔁 Record user allergy selection in Firestore
 async function recordSelection(venue, selectedAllergies) {
   try {
-    await addDoc(collection(db, "selections"), {
+    await db.collection("selections").add({
       venue: venue,
       selectedAllergies: selectedAllergies,
-      timestamp: serverTimestamp()
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
   } catch (error) {
     console.error("Error recording selection:", error);
   }
 }
+
 
 // ✅ Show only dishes that DO NOT contain any selected allergens
 function filterSafeDishes() {
