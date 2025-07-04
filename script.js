@@ -47,10 +47,11 @@ async function loadDishes() {
   const localKey = `dishes_${selectedVenue}`;
   let cached = null;
 
+  // ✅ Check localStorage availability
   if (localStorageAvailable) {
     try {
       cached = localStorage.getItem(localKey);
-      console.log("📦 Cached data found:", !!cached);
+      console.log("📦 Cached data found:", !!cached, "| Key:", localKey);
     } catch (e) {
       console.warn("🚫 localStorage access failed unexpectedly:", e);
     }
@@ -66,11 +67,15 @@ async function loadDishes() {
     snapshot.forEach(doc => {
       const data = doc.data();
       if (data.venue === selectedVenue) {
+        console.log("📥 Matching dish found:", data);
         allDishes.push(data);
+
         if (Array.isArray(data.allergens)) {
           data.allergens.forEach(allergen => allAllergens.add(allergen));
         }
         count++;
+      } else {
+        console.log("🚫 Skipped dish (wrong venue):", data.venue);
       }
     });
 
@@ -79,6 +84,7 @@ async function loadDishes() {
     if (localStorageAvailable) {
       try {
         localStorage.setItem(localKey, JSON.stringify(allDishes));
+        console.log("🧠 Dishes cached in localStorage.");
       } catch (e) {
         console.warn("🚫 Failed to save to localStorage:", e);
       }
@@ -89,12 +95,13 @@ async function loadDishes() {
     if (cached) {
       try {
         allDishes = JSON.parse(cached);
+        console.log("🧠 Loaded dishes from localStorage:", allDishes);
+
         allDishes.forEach(dish => {
           if (dish.allergens) {
             dish.allergens.forEach(allergen => allAllergens.add(allergen));
           }
         });
-        console.log("🧠 Loaded dishes from localStorage:", allDishes);
       } catch (e) {
         console.error("❌ Failed to parse cached data:", e);
         document.getElementById("allergen-form").innerHTML =
@@ -110,6 +117,7 @@ async function loadDishes() {
   }
 
   console.log("🔍 Found allergens:", Array.from(allAllergens));
+  console.log("🍽 Total dishes ready to show:", allDishes.length);
   renderCheckboxes();
 }
 
@@ -150,7 +158,8 @@ function getSelectedAllergies() {
 // 🔁 Record user allergy selection in Firestore
 async function recordSelection(venue, selectedAllergies) {
   try {
-    await db.collection("selections").add({
+    await addDoc(collection(db, "selections"), {
+
       venue: venue,
       selectedAllergies: selectedAllergies,
       timestamp: serverTimestamp()
