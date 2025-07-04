@@ -450,30 +450,31 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-// 🌐 Optional: enable offline support, except on Safari (which breaks it in private mode)
-const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  // 📱 More accurate Safari detection (not Chrome or Firefox on iOS)
+  const isRealSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
 
-if (!isSafari) {
-  try {
-    await enableIndexedDbPersistence(db);
-    console.log("✅ Offline persistence enabled");
-  } catch (err) {
-    console.warn("⚠️ Offline persistence failed or unsupported:", err.code || err.message);
+  if (!isRealSafari) {
+    try {
+      await enableIndexedDbPersistence(db);
+      console.log("✅ Offline persistence enabled");
+    } catch (err) {
+      console.warn("⚠️ Offline persistence failed or unsupported:", err.code || err.message);
+    }
+  } else {
+    console.log("🚫 Skipping offline persistence on Safari to avoid errors.");
   }
-} else {
-  console.log("🚫 Skipping offline persistence on Safari to avoid errors.");
-}
 
-  // Make Firestore methods globally accessible to script.js
+  // 🌐 Make Firestore available globally
   window.db = db;
   window.collection = collection;
   window.getDocs = getDocs;
   window.addDoc = addDoc;
   window.serverTimestamp = serverTimestamp;
 
-  // 📦 Load main app script after Firebase setup
+  // 📦 Load main app logic
   import("./script.js");
 </script>
+
 
 </body>
 </html>
