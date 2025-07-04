@@ -1,14 +1,20 @@
 // 🔁 Update this version anytime your dish data changes significantly
 const dataVersion = "v1.0";
 
-// 🔍 Detect private browsing in Safari
+// 🔍 Detect private browsing in Safari (and handle gracefully)
+let localStorageAvailable = true;
+
 try {
-  localStorage.setItem('test', '1');
-  localStorage.removeItem('test');
+  const testKey = "__test__";
+  localStorage.setItem(testKey, "1");
+  localStorage.removeItem(testKey);
   console.log("✅ localStorage is available");
 } catch (e) {
-  alert("Safari is in Private Browsing Mode. Please use regular browsing.");
+  localStorageAvailable = false;
+  console.warn("🚫 localStorage is blocked or Safari is in Private Mode.");
+  alert("⚠️ Safari may be in Private Browsing Mode. Please switch to regular mode or another browser.");
 }
+
 
 // 🧹 Clear outdated cache if version has changed
 if (localStorage.getItem("dataVersion") !== dataVersion) {
