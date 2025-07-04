@@ -38,28 +38,34 @@ let sortAsc = true;
 
 // Load dishes from Firestore filtered by selected venue
 async function loadDishes() {
+  console.log("🔁 loadDishes() called");
+  console.log("📡 Selected venue:", selectedVenue);
+
   allDishes = [];
   allAllergens.clear();
 
-  // Try localStorage first
   const localKey = `dishes_${selectedVenue}`;
   const cached = localStorage.getItem(localKey);
+  console.log("📦 Cached data found:", !!cached);
 
   try {
+    console.log("🌐 Attempting to fetch from Firestore...");
     const snapshot = await getDocs(collection(db, "dishes"));
+    let count = 0;
+
     snapshot.forEach(doc => {
       const data = doc.data();
       if (data.venue === selectedVenue) {
         allDishes.push(data);
         data.allergens.forEach(allergen => allAllergens.add(allergen));
+        count++;
       }
     });
 
-    // ✅ Cache the latest result
+    console.log(`✅ Loaded ${count} dishes from Firestore for venue "${selectedVenue}"`);
     localStorage.setItem(localKey, JSON.stringify(allDishes));
-    console.log("✅ Dishes loaded from Firestore and cached:", allDishes);
   } catch (error) {
-    console.warn("⚠️ Firestore failed. Loading cached data:", error);
+    console.warn("⚠️ Firestore fetch failed:", error);
 
     if (cached) {
       allDishes = JSON.parse(cached);
@@ -70,14 +76,17 @@ async function loadDishes() {
       });
       console.log("🧠 Loaded dishes from localStorage:", allDishes);
     } else {
-      console.error("❌ No dishes found for offline mode.");
-      document.getElementById("allergen-form").innerHTML = "<p style='color:red;'>No data available. Check your connection.</p>";
+      console.error("❌ No cached dishes found and Firestore failed.");
+      document.getElementById("allergen-form").innerHTML =
+        "<p style='color:red;'>No data available. Check your connection.</p>";
       return;
     }
   }
 
+  console.log("🔍 Found allergens:", Array.from(allAllergens));
   renderCheckboxes();
 }
+
 
 
 // Render checkboxes
