@@ -1,5 +1,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+// 🔁 Update this version anytime your dish data changes significantly
+const dataVersion = "v1.0";
+
+// 🧹 Clear outdated cache if version has changed
+if (localStorage.getItem("dataVersion") !== dataVersion) {
+  console.log("⚠️ New data version detected. Clearing old cache.");
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("dishes_")) {
+      localStorage.removeItem(key);
+    }
+  });
+  localStorage.setItem("dataVersion", dataVersion);
+}
 
 
 // Firebase configuration
@@ -25,21 +38,47 @@ let sortAsc = true;
 
 // Load dishes from Firestore filtered by selected venue
 async function loadDishes() {
-  const snapshot = await getDocs(collection(db, "dishes"));
   allDishes = [];
   allAllergens.clear();
-console.log("Selected venue:", selectedVenue);
 
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (data.venue === selectedVenue) {
-      allDishes.push(data);
-      data.allergens.forEach(allergen => allAllergens.add(allergen));
+  // Try localStorage first
+  const localKey = `dishes_${selectedVenue}`;
+  const cached = localStorage.getItem(localKey);
+
+  try {
+    const snapshot = await getDocs(collection(db, "dishes"));
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.venue === selectedVenue) {
+        allDishes.push(data);
+        data.allergens.forEach(allergen => allAllergens.add(allergen));
+      }
+    });
+
+    // ✅ Cache the latest result
+    localStorage.setItem(localKey, JSON.stringify(allDishes));
+    console.log("✅ Dishes loaded from Firestore and cached:", allDishes);
+  } catch (error) {
+    console.warn("⚠️ Firestore failed. Loading cached data:", error);
+
+    if (cached) {
+      allDishes = JSON.parse(cached);
+      allDishes.forEach(dish => {
+        if (dish.allergens) {
+          dish.allergens.forEach(allergen => allAllergens.add(allergen));
+        }
+      });
+      console.log("🧠 Loaded dishes from localStorage:", allDishes);
+    } else {
+      console.error("❌ No dishes found for offline mode.");
+      document.getElementById("allergen-form").innerHTML = "<p style='color:red;'>No data available. Check your connection.</p>";
+      return;
     }
-  });
+  }
 
   renderCheckboxes();
 }
+
 
 // Render checkboxes
 function renderCheckboxes() {
