@@ -37,6 +37,9 @@ let searchQuery = "";
 let sortAsc = true;
 
 // Load dishes from Firestore filtered by selected venue
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+
 async function loadDishes() {
   console.log("🔁 loadDishes() called");
   console.log("📡 Selected venue:", selectedVenue);
@@ -47,38 +50,30 @@ async function loadDishes() {
   const localKey = `dishes_${selectedVenue}`;
   let cached = null;
 
-  // ✅ Check localStorage availability
   if (localStorageAvailable) {
     try {
       cached = localStorage.getItem(localKey);
       console.log("📦 Cached data found:", !!cached, "| Key:", localKey);
     } catch (e) {
       console.warn("🚫 localStorage access failed unexpectedly:", e);
-      document.getElementById("debug-log").innerHTML += `<div style="color:red;">🚫 localStorage access error: ${e.message}</div>`;
     }
-  } else {
-    console.warn("⚠️ Skipping localStorage (not available)");
-    document.getElementById("debug-log").innerHTML += `<div style="color:red;">⚠️ localStorage not available.</div>`;
   }
 
   try {
     console.log("🌐 Attempting to fetch from Firestore...");
-    const snapshot = await db.collection("dishes").get();
-    let count = 0;
 
+    const q = query(collection(db, "dishes"), where("venue", "==", selectedVenue));
+    const snapshot = await getDocs(q);
+
+    let count = 0;
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.venue === selectedVenue) {
-        console.log("📥 Matching dish found:", data);
-        allDishes.push(data);
-
-        if (Array.isArray(data.allergens)) {
-          data.allergens.forEach(allergen => allAllergens.add(allergen));
-        }
-        count++;
-      } else {
-        console.log("🚫 Skipped dish (wrong venue):", data.venue);
+      console.log("📥 Matching dish found:", data);
+      allDishes.push(data);
+      if (Array.isArray(data.allergens)) {
+        data.allergens.forEach(allergen => allAllergens.add(allergen));
       }
+      count++;
     });
 
     console.log(`✅ Loaded ${count} dishes from Firestore for venue "${selectedVenue}"`);
@@ -89,38 +84,30 @@ async function loadDishes() {
         console.log("🧠 Dishes cached in localStorage.");
       } catch (e) {
         console.warn("🚫 Failed to save to localStorage:", e);
-        document.getElementById("debug-log").innerHTML += `<div style="color:red;">🚫 Failed to cache dishes: ${e.message}</div>`;
       }
     }
   } catch (error) {
-    const msg = `❌ Firestore fetch failed: ${error.message || error}`;
-    console.warn(msg);
-    document.getElementById("debug-log").innerHTML += `<div style="color:red;">${msg}</div>`;
+    console.warn("⚠️ Firestore fetch failed:", error);
 
     if (cached) {
       try {
         allDishes = JSON.parse(cached);
-        console.log("🧠 Loaded dishes from localStorage:", allDishes);
-
         allDishes.forEach(dish => {
           if (dish.allergens) {
             dish.allergens.forEach(allergen => allAllergens.add(allergen));
           }
         });
+        console.log("🧠 Loaded dishes from localStorage:", allDishes);
       } catch (e) {
-        const parseError = `❌ Failed to parse cached data: ${e.message}`;
-        console.error(parseError);
-        document.getElementById("debug-log").innerHTML += `<div style="color:red;">${parseError}</div>`;
+        console.error("❌ Failed to parse cached data:", e);
         document.getElementById("allergen-form").innerHTML =
           "<p style='color:red;'>No data available. Try reloading the page.</p>";
         return;
       }
     } else {
-      const noCacheMsg = "❌ No cached dishes found and Firestore failed.";
-      console.error(noCacheMsg);
-      document.getElementById("debug-log").innerHTML += `<div style="color:red;">${noCacheMsg}</div>`;
+      console.error("❌ No cached dishes found and Firestore failed.");
       document.getElementById("allergen-form").innerHTML =
-        "<p style='color:red;'>No data available. Check your connection or try a different browser.</p>";
+        "<p style='color:red;'>No data available. Check your connection.</p>";
       return;
     }
   }
@@ -129,7 +116,6 @@ async function loadDishes() {
   console.log("🍽 Total dishes ready to show:", allDishes.length);
   renderCheckboxes();
 }
-
 
 
 
