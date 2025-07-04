@@ -54,9 +54,11 @@ async function loadDishes() {
       console.log("📦 Cached data found:", !!cached, "| Key:", localKey);
     } catch (e) {
       console.warn("🚫 localStorage access failed unexpectedly:", e);
+      document.getElementById("debug-log").innerHTML += `<div style="color:red;">🚫 localStorage access error: ${e.message}</div>`;
     }
   } else {
     console.warn("⚠️ Skipping localStorage (not available)");
+    document.getElementById("debug-log").innerHTML += `<div style="color:red;">⚠️ localStorage not available.</div>`;
   }
 
   try {
@@ -87,10 +89,13 @@ async function loadDishes() {
         console.log("🧠 Dishes cached in localStorage.");
       } catch (e) {
         console.warn("🚫 Failed to save to localStorage:", e);
+        document.getElementById("debug-log").innerHTML += `<div style="color:red;">🚫 Failed to cache dishes: ${e.message}</div>`;
       }
     }
   } catch (error) {
-    console.warn("⚠️ Firestore fetch failed:", error);
+    const msg = `❌ Firestore fetch failed: ${error.message || error}`;
+    console.warn(msg);
+    document.getElementById("debug-log").innerHTML += `<div style="color:red;">${msg}</div>`;
 
     if (cached) {
       try {
@@ -103,15 +108,19 @@ async function loadDishes() {
           }
         });
       } catch (e) {
-        console.error("❌ Failed to parse cached data:", e);
+        const parseError = `❌ Failed to parse cached data: ${e.message}`;
+        console.error(parseError);
+        document.getElementById("debug-log").innerHTML += `<div style="color:red;">${parseError}</div>`;
         document.getElementById("allergen-form").innerHTML =
           "<p style='color:red;'>No data available. Try reloading the page.</p>";
         return;
       }
     } else {
-      console.error("❌ No cached dishes found and Firestore failed.");
+      const noCacheMsg = "❌ No cached dishes found and Firestore failed.";
+      console.error(noCacheMsg);
+      document.getElementById("debug-log").innerHTML += `<div style="color:red;">${noCacheMsg}</div>`;
       document.getElementById("allergen-form").innerHTML =
-        "<p style='color:red;'>No data available. Check your connection.</p>";
+        "<p style='color:red;'>No data available. Check your connection or try a different browser.</p>";
       return;
     }
   }
