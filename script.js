@@ -3,6 +3,16 @@ import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "http
 // 🔁 Update this version anytime your dish data changes significantly
 const dataVersion = "v1.0";
 
+// 🔍 Detect private browsing in Safari
+try {
+  localStorage.setItem('test', '1');
+  localStorage.removeItem('test');
+  console.log("✅ localStorage is available");
+} catch (e) {
+  alert("Safari is in Private Browsing Mode. Please use regular browsing.");
+}
+
+
 // 🧹 Clear outdated cache if version has changed
 if (localStorage.getItem("dataVersion") !== dataVersion) {
   console.log("⚠️ New data version detected. Clearing old cache.");
@@ -266,4 +276,8 @@ document.getElementById("close-modal").addEventListener("click", () => {
   document.getElementById("modal-overlay").style.display = "none";
 });
 
+
+function logDebug(message) {
+  document.getElementById("debug-log").innerHTML += `<div>${message}</div>`;
+}
 
