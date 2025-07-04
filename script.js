@@ -72,36 +72,62 @@ async function loadDishes() {
   allAllergens.clear();
 
   const localKey = `dishes_${selectedVenue}`;
-  const cached = localStorage.getItem(localKey);
-  console.log("📦 Cached data found:", !!cached);
+  let cached = null;
+
+  if (localStorageAvailable) {
+    try {
+      cached = localStorage.getItem(localKey);
+      console.log("📦 Cached data found:", !!cached);
+    } catch (e) {
+      console.warn("🚫 localStorage access failed unexpectedly:", e);
+    }
+  } else {
+    console.warn("⚠️ Skipping localStorage (not available)");
+  }
 
   try {
     console.log("🌐 Attempting to fetch from Firestore...");
-    const snapshot = await getDocs(collection(db, "dishes"));
+    const snapshot = await db.collection("dishes").get();
     let count = 0;
 
     snapshot.forEach(doc => {
       const data = doc.data();
       if (data.venue === selectedVenue) {
         allDishes.push(data);
-        data.allergens.forEach(allergen => allAllergens.add(allergen));
+        if (Array.isArray(data.allergens)) {
+          data.allergens.forEach(allergen => allAllergens.add(allergen));
+        }
         count++;
       }
     });
 
     console.log(`✅ Loaded ${count} dishes from Firestore for venue "${selectedVenue}"`);
-    localStorage.setItem(localKey, JSON.stringify(allDishes));
+
+    if (localStorageAvailable) {
+      try {
+        localStorage.setItem(localKey, JSON.stringify(allDishes));
+      } catch (e) {
+        console.warn("🚫 Failed to save to localStorage:", e);
+      }
+    }
   } catch (error) {
     console.warn("⚠️ Firestore fetch failed:", error);
 
     if (cached) {
-      allDishes = JSON.parse(cached);
-      allDishes.forEach(dish => {
-        if (dish.allergens) {
-          dish.allergens.forEach(allergen => allAllergens.add(allergen));
-        }
-      });
-      console.log("🧠 Loaded dishes from localStorage:", allDishes);
+      try {
+        allDishes = JSON.parse(cached);
+        allDishes.forEach(dish => {
+          if (dish.allergens) {
+            dish.allergens.forEach(allergen => allAllergens.add(allergen));
+          }
+        });
+        console.log("🧠 Loaded dishes from localStorage:", allDishes);
+      } catch (e) {
+        console.error("❌ Failed to parse cached data:", e);
+        document.getElementById("allergen-form").innerHTML =
+          "<p style='color:red;'>No data available. Try reloading the page.</p>";
+        return;
+      }
     } else {
       console.error("❌ No cached dishes found and Firestore failed.");
       document.getElementById("allergen-form").innerHTML =
@@ -113,6 +139,7 @@ async function loadDishes() {
   console.log("🔍 Found allergens:", Array.from(allAllergens));
   renderCheckboxes();
 }
+
 
 
 
